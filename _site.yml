@@ -1,0 +1,6 @@
+name: "Surfin the Web"
+navbar:
+  title: "Surfin the Web"
+  left:
+    - text: "Home"
+      href: index.html

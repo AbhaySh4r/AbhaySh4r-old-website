@@ -1,0 +1,311 @@
+---
+title: "Beer Analysis"
+author: "Abhay Sharma and Derek Rogers"
+date: "2022-10-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(class)
+library(caret)
+library(e1071)
+library(dplyr)
+library(ggthemes)
+library(plotly)
+library(ggExtra)
+library(scales)
+library(scico)
+library(stringr)
+library(naniar)
+```
+
+```{r}
+BeerData = data.frame(read.csv("~/SMU/Term 1/Doing Data Science/MSDS_6306_Doing-Data-Science-Master/Unit 8 and 9 Case Study 1/Beers.csv"))
+stock_data = BeerData #this is for the gg_miss_var function
+BreweriesData = data.frame(read.csv("~/SMU/Term 1/Doing Data Science/MSDS_6306_Doing-Data-Science-Master/Unit 8 and 9 Case Study 1/Breweries.csv"))
+```
+
+```{r}
+# Tidy data
+
+#Set state as a factor
+BreweriesData$State = as.factor(BreweriesData$State)
+BeerData$Style = as.factor(BeerData$Style)
+
+# Remove (year) at the end of the names of beers
+BeerData$Name = str_remove(BeerData$Name, "([:space:]|)\\(\\d\\d\\d\\d\\)")
+
+# Remove white space at the start and end of beer names
+BeerData$Name = str_trim(BeerData$Name)
+
+#Shows how many duplicates of each beer, 240 unwanted duplicates in total
+#BeerData %>% count(Name) %>% ungroup() %>% arrange(desc(n))
+
+# Remove beers with the same name, removes 240 unwanted duplicates
+BeerData = BeerData %>% group_by(Name) %>% filter(!duplicated(Name))
+
+```
+
+```{r}
+# Manually add in missing data for beers for question/item #3
+# Parsing through the data, we can see that a large amount of information from the IBV and ABV values of beer are missing. 
+# While it is possible to hand-fill out values for both, counting the total number of missing values over both groups add up to over 1000 missing values.
+# For the most part, we can ignore the missing data, but we cannot prove that the missing data is truly random. 
+# While we can perform an analysis on the data, we must be cautious as to the bias the exclusion of missing data could apply to our results. 
+
+
+
+# After googling various beers without IBU's and looking for the missing value it seems like many are hard to find 
+BeerData[BeerData$Name == "Lee Hill Series Vol. 5 - Belgian Style Quadrupel Ale",]$IBU = 35
+BeerData[BeerData$Name == "Pub Beer",]$IBU = 18
+BeerData[BeerData$Name == "Sinister",]$IBU = 30
+
+#gg_miss_var(BeerData) Did not work as intended, might use to visualize missing values, might not be necessary
+
+gg_miss_var(stock_data)
+
+```
+
+```{r}
+# Merge beer data with breweries data for question/item #2
+names(BreweriesData)[1] = "Brewery_id"
+mergedBeerData = merge(BeerData, BreweriesData, by = "Brewery_id")
+
+head(mergedBeerData, 6)
+tail(mergedBeerData, 6)
+```
+
+```{r}
+# Find the beer with the largest ABV and IBU and return those row for question #5
+# The beer with the highest ABV is the Lee Hill Series Vol. 5 – Belgian Style Quadrupel Ale at 12.8% ABV from the state of Colorado
+# The beer with the highest IBU is the Bitter Bitch Imperial IPA with an ABU of 138 from Oregon
+
+"Highest ABV:"
+max(mergedBeerData$ABV, na.rm = TRUE)
+"Highest IBU:"
+max(mergedBeerData$IBU, na.rm = TRUE)
+
+mergedBeerData[which.max(mergedBeerData$ABV),]
+mergedBeerData[which.max(mergedBeerData$IBU),]
+```
+
+```{r}
+# create histogram of the number of breweries in each state for question #1
+# Colorado has the most breweries followed by California
+
+BreweriesData %>% ggplot(aes(x=fct_infreq(State))) + 
+  geom_bar(stat = "count") + 
+  labs(title="Number of Breweries in each State", 
+       y="Count", 
+       x="State") +
+  theme(axis.text.x = element_text(size = rel(0.8), angle = 90))
+
+```
+
+```{r}
+# Show a map of the US to show how many breweries are in each state with plotly for question #1
+# The coastal states tend to have more breweries than inland states. States know to have high populations tend to have more breweries.
+
+g = list(scope = 'usa')
+
+fig = plot_geo(BreweriesData, locationmode = 'USA-states') %>%
+  add_trace(
+    colors = 'purples'
+  ) %>%
+  colorbar(title = "Number of breweries in each state") %>%
+  layout(geo = g)
+
+
+# Creates a map of the US to show count of how many breweries are in each state;
+
+states_map <- map_data("state")
+
+map_data1 = BreweriesData %>% count(State)
+map_data1$State = state.name[match(str_squish(map_data1$State), state.abb)]
+map_data1$State = tolower(map_data1$State)
+
+
+ggplot(map_data1, aes(map_id = State)) +
+  geom_map(aes(fill = n), map = states_map) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  labs(title = "Count of Breweries in the US")+ 
+  ggthemes::theme_map() +
+  scico::scale_fill_scico(palette = "berlin")
+
+```
+
+```{r}
+# Compute the median alcohol content and international bitterness unit for each state then plot with a bar chart for question number 4
+# States with a higher number of breweries tend to be towards the middle of the rankings for ABV and IBU.
+# D.C has the highest median ABV and Maine has the highest IBU
+
+stateMedianABV = mergedBeerData %>% filter(!is.na(ABV)) %>% group_by(State) %>% summarise(Median = median(ABV)) %>% arrange(desc(Median))
+stateMedianIBU = mergedBeerData %>% filter(!is.na(IBU)) %>% group_by(State) %>% summarise(Median = median(IBU)) %>% arrange(desc(Median))
+
+stateNumberOfBeersABV = mergedBeerData %>% filter(!is.na(ABV)) %>% group_by(State) %>% tally()
+stateNumberOfBeersIBU = mergedBeerData %>% filter(!is.na(IBU)) %>% group_by(State) %>% tally()
+
+stateMedianABV = merge(stateMedianABV, stateNumberOfBeersABV, by = "State")
+stateMedianIBU = merge(stateMedianIBU, stateNumberOfBeersIBU, by = "State")
+
+#stateMedianABV
+#stateMedianIBU
+
+stateMedianABV %>% ggplot(aes(x = reorder(State, -Median), y = Median)) +
+  geom_bar(stat = "identity", aes(fill = n)) +
+  scico::scale_fill_scico(palette = "lajolla") +
+  theme(axis.text.x = element_text(size = rel(0.8), angle = 90)) +
+  labs(title="Median ABV by State", 
+     y="Median ABV", 
+     x="State",
+     fill = "# Beers")
+
+stateMedianIBU %>% ggplot(aes(x = reorder(State, -Median), y = Median)) +
+  geom_bar(stat = "identity", aes(fill = n)) +
+  scico::scale_fill_scico(palette = "lajolla") +
+  theme(axis.text.x = element_text(size = rel(0.8), angle = 90)) +
+  labs(title="Median IBU by State", 
+     y="Median IBU", 
+     x="State", 
+     fill = "# Beers")
+
+```
+
+```{r}
+# Summary statistics for ABV variable for question #6
+# The mean ABV is higher than the median ABV. ABV ranges from 1 to 12.8 percent
+summary(mergedBeerData %>% filter(!is.na(ABV)))
+```
+
+```{r}
+# Boxplot of ABV  for question #6
+# This shows a right skew of the ABV data
+scatterPlotABV = ggplot(data = mergedBeerData %>% filter(!is.na(ABV)), aes(x=ABV)) + 
+  geom_boxplot() +
+  ylim(-1,1) +
+  labs(title = "ABV Distrobution", x = "ABV") +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+
+plot(scatterPlotABV)
+#ggplotly(scatterPlotABV)
+```
+
+```{r}
+# Distribution of the ABV variable  for question #
+# This shows a right skew of the ABV data
+barPlotABV <- ggplot(data = mergedBeerData %>% filter(!is.na(ABV)), aes(x=ABV)) +
+  geom_bar(stat = "count") + 
+  labs(title="Distribution of ABV", 
+       y="Count", 
+       x="ABV")
+
+ggplotly(barPlotABV)
+```
+
+```{r}
+# Scatter plot between IBU and ABV for question #7
+# There is a plausible relationship between the ABV and IBU. 
+# While ABV values are low we see a general trend of low IBUs, and on the flipside, when ABV values are high, we see a corresponding trend of high IBUs. 
+# Naturally, there are outliers to this data, which are very likely contributing to the secondary curve in the graph and as previously mentioned, but generally this is a very plausible relationship. 
+
+scatterPlotIBUvsABV = mergedBeerData %>% filter(!is.na(ABV) & !is.na(IBU)) %>% ggplot(aes(x=ABV, y=IBU)) + 
+  geom_point(position = "jitter") + 
+  geom_smooth(method = "loess", se = F) + 
+  labs(title = "Relationship between ABV and IBU", 
+       y = "IBU", 
+       x = "ABV")
+
+#plot(scatterPlotIBUvsABV)
+#ggplotly(scatterPlotIBUvsABV)
+#ggMarginal(scatterPlotIBUvsABV, type = "histogram")
+#ggMarginal(scatterPlotIBUvsABV, type = "boxplot")
+ggMarginal(scatterPlotIBUvsABV)
+```
+
+```{r}
+# Get list of all unique styles of beers and the number of beers of each style
+# For question/item 8 and 9
+
+# Only keep beers with a Style, ABV and IBU
+uniqueStyles = mergedBeerData %>% filter(!is.na(Style))
+
+# Create dataframe that contains every unique style and how many beers have that style
+uniqueStyles = uniqueStyles %>% group_by(Style) %>% tally()
+
+uniqueStyles
+```
+
+```{r}
+# Prepare data for knn modeling to predict style based off of ABV and IBU for question #8
+# We can see that a K value of 6 yields the best accuracy at % 86.15960
+
+# Only keep beers with a Style, ABV and IBU
+AbvIbuBeer = mergedBeerData %>% filter(!is.na(ABV) & !is.na(IBU) & !is.na(Style))
+# Set the style column to numeric to more easily manipulate the values
+AbvIbuBeer$Style = as.character(AbvIbuBeer$Style)
+# Keep only beers with a style containing string "IPA" or "Ale"
+AbvIbuBeer = AbvIbuBeer[str_detect(AbvIbuBeer$Style, "IPA|Ale"),]
+# If a syle doesn't contain the "IPA" but does contain "Ale" then change style to "Other"
+AbvIbuBeer$Style[AbvIbuBeer$Style != grepl("IPA", AbvIbuBeer$Style, fixed = TRUE) & grepl("Ale", AbvIbuBeer$Style, fixed = TRUE)] = "Other"
+# Figure out how to change any style containing "IPA" to type "IPA"
+AbvIbuBeer$Style[grepl("IPA", AbvIbuBeer$Style, fixed = TRUE)] = "IPA"
+# Only keep beers with style 'IPA' or 'Other'
+AbvIbuBeer = AbvIbuBeer %>% filter(Style == "IPA" | Style == "Other")
+AbvIbuBeer$Style = as.factor(AbvIbuBeer$Style)
+# Drop all levels except for 'IPA' and 'Other'
+AbvIbuBeer$Style = droplevels(AbvIbuBeer$Style)
+
+table(AbvIbuBeer$Style)
+
+# Model relationship between ABV and IBU with knn
+maxKvalue = 100
+accuracyVector = c(maxKvalue)
+
+for(i in 1:maxKvalue){
+  classifications = knn.cv(AbvIbuBeer[,c(4,5)], AbvIbuBeer$Style, k=i, prob = TRUE)
+  accuracyVector[i] = confusionMatrix(table(classifications, AbvIbuBeer$Style))$overall[1]
+}
+
+higestAccuracyKValue = which.max(accuracyVector)
+
+higestAccuracyKValue
+accuracyVector
+```
+
+```{r}
+# Plot Knn Accuracy and IBU/ABV by Style for question #8
+plot(seq(1, maxKvalue, 1), accuracyVector, type = "l", xlab = "K value", ylab = "accuracy", main = "accuracy for k values")
+
+AbvIbuBeer %>% ggplot(aes(x = ABV, y = IBU, color = Style)) + 
+  geom_jitter() +
+  labs(title="IBU vs ABV for IPA's and Other Ales")
+
+```
+
+```{r}
+# Question #9
+# The mean beer. Find the mean ABV, IBU, most common number of ounces, and most common style of beer
+
+# Name: "Average Beer"
+# Calculate the mean ABV/IBU
+ABVBeer = mergedBeerData %>% filter(!is.na(ABV))
+IBUBeer = mergedBeerData %>% filter(!is.na(IBU))
+
+# with a count of 384 the American IPA is the most common style of beer
+# most common ounces is 12
+"Mean ABV:"
+mean(ABVBeer$ABV)
+"Mean IBU:"
+mean(IBUBeer$IBU)
+
+# We could name the most "average" beer in the dataset:
+
+avgBeer = mergedBeerData %>% filter(IBU == 42 & ABV == 0.059)
+avgBeer
+
+```

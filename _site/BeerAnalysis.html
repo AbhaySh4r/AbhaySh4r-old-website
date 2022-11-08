@@ -261,6 +261,12 @@ $(document).ready(function () {
         <li>
   <a href="index.html">Home</a>
 </li>
+<li>
+  <a href="BeerAnalysis.html">Beer Project</a>
+</li>
+<li>
+  <a href="aboutme.html">About Me</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -281,12 +287,12 @@ $(document).ready(function () {
 
 
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.2 ──
 ## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
 ## ✔ tibble  3.1.8     ✔ dplyr   1.0.9
 ## ✔ tidyr   1.2.0     ✔ stringr 1.4.1
 ## ✔ readr   2.1.2     ✔ forcats 0.5.2
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>library(class)
@@ -367,57 +373,35 @@ BeerData[BeerData$Name == &quot;Sinister&quot;,]$IBU = 30
 #gg_miss_var(BeerData) Did not work as intended, might use to visualize missing values, might not be necessary
 
 gg_miss_var(stock_data)</code></pre>
-<pre><code>## Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
-## use `guide = &quot;none&quot;` instead.</code></pre>
+<pre><code>## Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please use `guide = &quot;none&quot;` instead.</code></pre>
 <p><img src="BeerAnalysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <pre class="r"><code># Merge beer data with breweries data for question/item #2
 names(BreweriesData)[1] = &quot;Brewery_id&quot;
 mergedBeerData = merge(BeerData, BreweriesData, by = &quot;Brewery_id&quot;)
 
 head(mergedBeerData, 6)</code></pre>
-<pre><code>##   Brewery_id        Name.x Beer_ID   ABV IBU
-## 1          1  Get Together    2692 0.045  50
-## 2          1 Maggie&#39;s Leap    2691 0.049  26
-## 3          1    Wall&#39;s End    2690 0.048  19
-## 4          1       Pumpion    2689 0.060  38
-## 5          1    Stronghold    2688 0.060  25
-## 6          1   Parapet ESB    2687 0.056  47
-##                                 Style Ounces             Name.y        City
-## 1                        American IPA     16 NorthGate Brewing  Minneapolis
-## 2                  Milk / Sweet Stout     16 NorthGate Brewing  Minneapolis
-## 3                   English Brown Ale     16 NorthGate Brewing  Minneapolis
-## 4                         Pumpkin Ale     16 NorthGate Brewing  Minneapolis
-## 5                     American Porter     16 NorthGate Brewing  Minneapolis
-## 6 Extra Special / Strong Bitter (ESB)     16 NorthGate Brewing  Minneapolis
-##   State
-## 1    MN
-## 2    MN
-## 3    MN
-## 4    MN
-## 5    MN
-## 6    MN</code></pre>
+<pre><code>##   Brewery_id        Name.x Beer_ID   ABV IBU                               Style Ounces             Name.y        City State
+## 1          1  Get Together    2692 0.045  50                        American IPA     16 NorthGate Brewing  Minneapolis    MN
+## 2          1 Maggie&#39;s Leap    2691 0.049  26                  Milk / Sweet Stout     16 NorthGate Brewing  Minneapolis    MN
+## 3          1    Wall&#39;s End    2690 0.048  19                   English Brown Ale     16 NorthGate Brewing  Minneapolis    MN
+## 4          1       Pumpion    2689 0.060  38                         Pumpkin Ale     16 NorthGate Brewing  Minneapolis    MN
+## 5          1    Stronghold    2688 0.060  25                     American Porter     16 NorthGate Brewing  Minneapolis    MN
+## 6          1   Parapet ESB    2687 0.056  47 Extra Special / Strong Bitter (ESB)     16 NorthGate Brewing  Minneapolis    MN</code></pre>
 <pre class="r"><code>tail(mergedBeerData, 6)</code></pre>
-<pre><code>##      Brewery_id                    Name.x Beer_ID   ABV IBU
-## 2165        556             Pilsner Ukiah      98 0.055  NA
-## 2166        557  Heinnieweisse Weissebier      52 0.049  NA
-## 2167        557           Snapperhead IPA      51 0.068  NA
-## 2168        557         Moo Thunder Stout      50 0.049  NA
-## 2169        557         Porkslap Pale Ale      49 0.043  NA
-## 2170        558 Urban Wilderness Pale Ale      30 0.049  NA
-##                        Style Ounces                        Name.y          City
-## 2165         German Pilsener     12         Ukiah Brewing Company         Ukiah
-## 2166              Hefeweizen     12       Butternuts Beer and Ale Garrattsville
-## 2167            American IPA     12       Butternuts Beer and Ale Garrattsville
-## 2168      Milk / Sweet Stout     12       Butternuts Beer and Ale Garrattsville
-## 2169 American Pale Ale (APA)     12       Butternuts Beer and Ale Garrattsville
-## 2170        English Pale Ale     12 Sleeping Lady Brewing Company     Anchorage
-##      State
-## 2165    CA
-## 2166    NY
-## 2167    NY
-## 2168    NY
-## 2169    NY
-## 2170    AK</code></pre>
+<pre><code>##      Brewery_id                    Name.x Beer_ID   ABV IBU                   Style Ounces                        Name.y
+## 2165        556             Pilsner Ukiah      98 0.055  NA         German Pilsener     12         Ukiah Brewing Company
+## 2166        557  Heinnieweisse Weissebier      52 0.049  NA              Hefeweizen     12       Butternuts Beer and Ale
+## 2167        557           Snapperhead IPA      51 0.068  NA            American IPA     12       Butternuts Beer and Ale
+## 2168        557         Moo Thunder Stout      50 0.049  NA      Milk / Sweet Stout     12       Butternuts Beer and Ale
+## 2169        557         Porkslap Pale Ale      49 0.043  NA American Pale Ale (APA)     12       Butternuts Beer and Ale
+## 2170        558 Urban Wilderness Pale Ale      30 0.049  NA        English Pale Ale     12 Sleeping Lady Brewing Company
+##               City State
+## 2165         Ukiah    CA
+## 2166 Garrattsville    NY
+## 2167 Garrattsville    NY
+## 2168 Garrattsville    NY
+## 2169 Garrattsville    NY
+## 2170     Anchorage    AK</code></pre>
 <pre class="r"><code># Find the beer with the largest ABV and IBU and return those row for question #5
 # The beer with the highest ABV is the Lee Hill Series Vol. 5 – Belgian Style Quadrupel Ale at 12.8% ABV from the state of Colorado
 # The beer with the highest IBU is the Bitter Bitch Imperial IPA with an ABU of 138 from Oregon
@@ -431,15 +415,13 @@ head(mergedBeerData, 6)</code></pre>
 <pre class="r"><code>max(mergedBeerData$IBU, na.rm = TRUE)</code></pre>
 <pre><code>## [1] 138</code></pre>
 <pre class="r"><code>mergedBeerData[which.max(mergedBeerData$ABV),]</code></pre>
-<pre><code>##     Brewery_id                                               Name.x Beer_ID
-## 343         52 Lee Hill Series Vol. 5 - Belgian Style Quadrupel Ale    2565
-##       ABV IBU            Style Ounces                  Name.y    City State
-## 343 0.128  35 Quadrupel (Quad)   19.2 Upslope Brewing Company Boulder    CO</code></pre>
+<pre><code>##     Brewery_id                                               Name.x Beer_ID   ABV IBU            Style Ounces
+## 343         52 Lee Hill Series Vol. 5 - Belgian Style Quadrupel Ale    2565 0.128  35 Quadrupel (Quad)   19.2
+##                      Name.y    City State
+## 343 Upslope Brewing Company Boulder    CO</code></pre>
 <pre class="r"><code>mergedBeerData[which.max(mergedBeerData$IBU),]</code></pre>
-<pre><code>##      Brewery_id                    Name.x Beer_ID   ABV IBU
-## 1671        375 Bitter Bitch Imperial IPA     980 0.082 138
-##                               Style Ounces                  Name.y    City
-## 1671 American Double / Imperial IPA     12 Astoria Brewing Company Astoria
+<pre><code>##      Brewery_id                    Name.x Beer_ID   ABV IBU                          Style Ounces                  Name.y    City
+## 1671        375 Bitter Bitch Imperial IPA     980 0.082 138 American Double / Imperial IPA     12 Astoria Brewing Company Astoria
 ##      State
 ## 1671    OR</code></pre>
 <pre class="r"><code># create histogram of the number of breweries in each state for question #1
@@ -520,30 +502,22 @@ stateMedianABV %&gt;% ggplot(aes(x = reorder(State, -Median), y = Median)) +
 <pre class="r"><code># Summary statistics for ABV variable for question #6
 # The mean ABV is higher than the median ABV. ABV ranges from 1 to 12.8 percent
 summary(mergedBeerData %&gt;% filter(!is.na(ABV)))</code></pre>
-<pre><code>##    Brewery_id        Name.x             Beer_ID            ABV         
-##  Min.   :  1.00   Length:2110        Min.   :   4.0   Min.   :0.00100  
-##  1st Qu.: 94.25   Class :character   1st Qu.: 951.2   1st Qu.:0.05000  
-##  Median :210.00   Mode  :character   Median :1538.5   Median :0.05600  
-##  Mean   :232.21                      Mean   :1499.0   Mean   :0.05985  
-##  3rd Qu.:366.00                      3rd Qu.:2107.8   3rd Qu.:0.06800  
-##  Max.   :558.00                      Max.   :2692.0   Max.   :0.12800  
-##                                                                        
-##       IBU                                    Style          Ounces     
-##  Min.   :  4.00   American IPA                  : 377   Min.   : 8.40  
-##  1st Qu.: 22.00   American Pale Ale (APA)       : 205   1st Qu.:12.00  
-##  Median : 35.00   American Amber / Red Ale      : 110   Median :12.00  
-##  Mean   : 42.67   American Blonde Ale           :  94   Mean   :13.61  
-##  3rd Qu.: 62.00   American Double / Imperial IPA:  91   3rd Qu.:16.00  
-##  Max.   :138.00   American Pale Wheat Ale       :  69   Max.   :32.00  
-##  NA&#39;s   :889      (Other)                       :1164                  
-##     Name.y              City               State     
-##  Length:2110        Length:2110         CO    : 213  
-##  Class :character   Class :character    CA    : 158  
-##  Mode  :character   Mode  :character    MI    : 143  
-##                                         IN    : 126  
-##                                         TX    : 112  
-##                                         PA    :  96  
-##                                        (Other):1262</code></pre>
+<pre><code>##    Brewery_id        Name.x             Beer_ID            ABV               IBU                                    Style     
+##  Min.   :  1.00   Length:2110        Min.   :   4.0   Min.   :0.00100   Min.   :  4.00   American IPA                  : 377  
+##  1st Qu.: 94.25   Class :character   1st Qu.: 951.2   1st Qu.:0.05000   1st Qu.: 22.00   American Pale Ale (APA)       : 205  
+##  Median :210.00   Mode  :character   Median :1538.5   Median :0.05600   Median : 35.00   American Amber / Red Ale      : 110  
+##  Mean   :232.21                      Mean   :1499.0   Mean   :0.05985   Mean   : 42.67   American Blonde Ale           :  94  
+##  3rd Qu.:366.00                      3rd Qu.:2107.8   3rd Qu.:0.06800   3rd Qu.: 62.00   American Double / Imperial IPA:  91  
+##  Max.   :558.00                      Max.   :2692.0   Max.   :0.12800   Max.   :138.00   American Pale Wheat Ale       :  69  
+##                                                                         NA&#39;s   :889      (Other)                       :1164  
+##      Ounces         Name.y              City               State     
+##  Min.   : 8.40   Length:2110        Length:2110         CO    : 213  
+##  1st Qu.:12.00   Class :character   Class :character    CA    : 158  
+##  Median :12.00   Mode  :character   Mode  :character    MI    : 143  
+##  Mean   :13.61                                          IN    : 126  
+##  3rd Qu.:16.00                                          TX    : 112  
+##  Max.   :32.00                                          PA    :  96  
+##                                                        (Other):1262</code></pre>
 <pre class="r"><code># Boxplot of ABV  for question #6
 # This shows a right skew of the ABV data
 scatterPlotABV = ggplot(data = mergedBeerData %&gt;% filter(!is.na(ABV)), aes(x=ABV)) + 
@@ -564,8 +538,8 @@ barPlotABV &lt;- ggplot(data = mergedBeerData %&gt;% filter(!is.na(ABV)), aes(x=
        x=&quot;ABV&quot;)
 
 ggplotly(barPlotABV)</code></pre>
-<div id="htmlwidget-8ff400e91ceb52be77d7" style="width:672px;height:480px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-8ff400e91ceb52be77d7">{"x":{"data":[{"orientation":"v","width":[0.000899999999999988,0.000899999999999991,0.000899999999999991,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999998,0.000900000000000012],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[0.001,0.027,0.028,0.032,0.034,0.035,0.037,0.038,0.039,0.04,0.041,0.042,0.043,0.044,0.045,0.046,0.047,0.048,0.049,0.05,0.051,0.052,0.053,0.054,0.055,0.056,0.057,0.058,0.059,0.06,0.061,0.062,0.063,0.064,0.065,0.066,0.067,0.068,0.069,0.07,0.071,0.072,0.073,0.074,0.075,0.076,0.077,0.078,0.079,0.08,0.081,0.082,0.083,0.084,0.085,0.086,0.087,0.088,0.089,0.09,0.091,0.092,0.093,0.094,0.095,0.096,0.097,0.098,0.099,0.1,0.104,0.12,0.125,0.128],"y":[1,2,1,3,1,5,4,6,4,36,9,35,12,15,88,26,48,68,50,190,57,96,55,44,146,55,47,60,27,120,19,51,33,18,98,18,23,50,29,87,18,34,16,7,41,5,13,9,6,46,4,20,8,3,22,4,10,6,2,21,3,12,5,1,8,4,4,3,33,1,1,1,1,1],"text":["count:   1<br />ABV: 0.001","count:   2<br />ABV: 0.027","count:   1<br />ABV: 0.028","count:   3<br />ABV: 0.032","count:   1<br />ABV: 0.034","count:   5<br />ABV: 0.035","count:   4<br />ABV: 0.037","count:   6<br />ABV: 0.038","count:   4<br />ABV: 0.039","count:  36<br />ABV: 0.040","count:   9<br />ABV: 0.041","count:  35<br />ABV: 0.042","count:  12<br />ABV: 0.043","count:  15<br />ABV: 0.044","count:  88<br />ABV: 0.045","count:  26<br />ABV: 0.046","count:  48<br />ABV: 0.047","count:  68<br />ABV: 0.048","count:  50<br />ABV: 0.049","count: 190<br />ABV: 0.050","count:  57<br />ABV: 0.051","count:  96<br />ABV: 0.052","count:  55<br />ABV: 0.053","count:  44<br />ABV: 0.054","count: 146<br />ABV: 0.055","count:  55<br />ABV: 0.056","count:  47<br />ABV: 0.057","count:  60<br />ABV: 0.058","count:  27<br />ABV: 0.059","count: 120<br />ABV: 0.060","count:  19<br />ABV: 0.061","count:  51<br />ABV: 0.062","count:  33<br />ABV: 0.063","count:  18<br />ABV: 0.064","count:  98<br />ABV: 0.065","count:  18<br />ABV: 0.066","count:  23<br />ABV: 0.067","count:  50<br />ABV: 0.068","count:  29<br />ABV: 0.069","count:  87<br />ABV: 0.070","count:  18<br />ABV: 0.071","count:  34<br />ABV: 0.072","count:  16<br />ABV: 0.073","count:   7<br />ABV: 0.074","count:  41<br />ABV: 0.075","count:   5<br />ABV: 0.076","count:  13<br />ABV: 0.077","count:   9<br />ABV: 0.078","count:   6<br />ABV: 0.079","count:  46<br />ABV: 0.080","count:   4<br />ABV: 0.081","count:  20<br />ABV: 0.082","count:   8<br />ABV: 0.083","count:   3<br />ABV: 0.084","count:  22<br />ABV: 0.085","count:   4<br />ABV: 0.086","count:  10<br />ABV: 0.087","count:   6<br />ABV: 0.088","count:   2<br />ABV: 0.089","count:  21<br />ABV: 0.090","count:   3<br />ABV: 0.091","count:  12<br />ABV: 0.092","count:   5<br />ABV: 0.093","count:   1<br />ABV: 0.094","count:   8<br />ABV: 0.095","count:   4<br />ABV: 0.096","count:   4<br />ABV: 0.097","count:   3<br />ABV: 0.098","count:  33<br />ABV: 0.099","count:   1<br />ABV: 0.100","count:   1<br />ABV: 0.104","count:   1<br />ABV: 0.120","count:   1<br />ABV: 0.125","count:   1<br />ABV: 0.128"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(89,89,89,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.7625570776256,"r":7.30593607305936,"b":40.1826484018265,"l":43.1050228310502},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Distribution of ABV","font":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.005845,0.134845],"tickmode":"array","ticktext":["0.00","0.05","0.10"],"tickvals":[0,0.05,0.1],"categoryorder":"array","categoryarray":["0.00","0.05","0.10"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"ABV","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-9.5,199.5],"tickmode":"array","ticktext":["0","50","100","150"],"tickvals":[0,50,100,150],"categoryorder":"array","categoryarray":["0","50","100","150"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"65e81d5d349f":{"x":{},"type":"bar"}},"cur_data":"65e81d5d349f","visdat":{"65e81d5d349f":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-626a67fd48938cb88bcc" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-626a67fd48938cb88bcc">{"x":{"data":[{"orientation":"v","width":[0.000899999999999988,0.000899999999999991,0.000899999999999991,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999984,0.000899999999999998,0.000900000000000012],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[0.001,0.027,0.028,0.032,0.034,0.035,0.037,0.038,0.039,0.04,0.041,0.042,0.043,0.044,0.045,0.046,0.047,0.048,0.049,0.05,0.051,0.052,0.053,0.054,0.055,0.056,0.057,0.058,0.059,0.06,0.061,0.062,0.063,0.064,0.065,0.066,0.067,0.068,0.069,0.07,0.071,0.072,0.073,0.074,0.075,0.076,0.077,0.078,0.079,0.08,0.081,0.082,0.083,0.084,0.085,0.086,0.087,0.088,0.089,0.09,0.091,0.092,0.093,0.094,0.095,0.096,0.097,0.098,0.099,0.1,0.104,0.12,0.125,0.128],"y":[1,2,1,3,1,5,4,6,4,36,9,35,12,15,88,26,48,68,50,190,57,96,55,44,146,55,47,60,27,120,19,51,33,18,98,18,23,50,29,87,18,34,16,7,41,5,13,9,6,46,4,20,8,3,22,4,10,6,2,21,3,12,5,1,8,4,4,3,33,1,1,1,1,1],"text":["count:   1<br />ABV: 0.001","count:   2<br />ABV: 0.027","count:   1<br />ABV: 0.028","count:   3<br />ABV: 0.032","count:   1<br />ABV: 0.034","count:   5<br />ABV: 0.035","count:   4<br />ABV: 0.037","count:   6<br />ABV: 0.038","count:   4<br />ABV: 0.039","count:  36<br />ABV: 0.040","count:   9<br />ABV: 0.041","count:  35<br />ABV: 0.042","count:  12<br />ABV: 0.043","count:  15<br />ABV: 0.044","count:  88<br />ABV: 0.045","count:  26<br />ABV: 0.046","count:  48<br />ABV: 0.047","count:  68<br />ABV: 0.048","count:  50<br />ABV: 0.049","count: 190<br />ABV: 0.050","count:  57<br />ABV: 0.051","count:  96<br />ABV: 0.052","count:  55<br />ABV: 0.053","count:  44<br />ABV: 0.054","count: 146<br />ABV: 0.055","count:  55<br />ABV: 0.056","count:  47<br />ABV: 0.057","count:  60<br />ABV: 0.058","count:  27<br />ABV: 0.059","count: 120<br />ABV: 0.060","count:  19<br />ABV: 0.061","count:  51<br />ABV: 0.062","count:  33<br />ABV: 0.063","count:  18<br />ABV: 0.064","count:  98<br />ABV: 0.065","count:  18<br />ABV: 0.066","count:  23<br />ABV: 0.067","count:  50<br />ABV: 0.068","count:  29<br />ABV: 0.069","count:  87<br />ABV: 0.070","count:  18<br />ABV: 0.071","count:  34<br />ABV: 0.072","count:  16<br />ABV: 0.073","count:   7<br />ABV: 0.074","count:  41<br />ABV: 0.075","count:   5<br />ABV: 0.076","count:  13<br />ABV: 0.077","count:   9<br />ABV: 0.078","count:   6<br />ABV: 0.079","count:  46<br />ABV: 0.080","count:   4<br />ABV: 0.081","count:  20<br />ABV: 0.082","count:   8<br />ABV: 0.083","count:   3<br />ABV: 0.084","count:  22<br />ABV: 0.085","count:   4<br />ABV: 0.086","count:  10<br />ABV: 0.087","count:   6<br />ABV: 0.088","count:   2<br />ABV: 0.089","count:  21<br />ABV: 0.090","count:   3<br />ABV: 0.091","count:  12<br />ABV: 0.092","count:   5<br />ABV: 0.093","count:   1<br />ABV: 0.094","count:   8<br />ABV: 0.095","count:   4<br />ABV: 0.096","count:   4<br />ABV: 0.097","count:   3<br />ABV: 0.098","count:  33<br />ABV: 0.099","count:   1<br />ABV: 0.100","count:   1<br />ABV: 0.104","count:   1<br />ABV: 0.120","count:   1<br />ABV: 0.125","count:   1<br />ABV: 0.128"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(89,89,89,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.7625570776256,"r":7.30593607305936,"b":40.1826484018265,"l":43.1050228310502},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Distribution of ABV","font":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.005845,0.134845],"tickmode":"array","ticktext":["0.00","0.05","0.10"],"tickvals":[0,0.05,0.1],"categoryorder":"array","categoryarray":["0.00","0.05","0.10"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"ABV","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-9.5,199.5],"tickmode":"array","ticktext":["0","50","100","150"],"tickvals":[0,50,100,150],"categoryorder":"array","categoryarray":["0","50","100","150"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"595c3c2d77bd":{"x":{},"type":"bar"}},"cur_data":"595c3c2d77bd","visdat":{"595c3c2d77bd":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <pre class="r"><code># Scatter plot between IBU and ABV for question #7
 # There is a plausible relationship between the ABV and IBU. 
 # While ABV values are low we see a general trend of low IBUs, and on the flipside, when ABV values are high, we see a corresponding trend of high IBUs. 
@@ -648,21 +622,15 @@ higestAccuracyKValue = which.max(accuracyVector)
 higestAccuracyKValue</code></pre>
 <pre><code>## [1] 7</code></pre>
 <pre class="r"><code>accuracyVector</code></pre>
-<pre><code>##   [1] 0.8004988 0.8067332 0.8229426 0.8316708 0.8478803 0.8553616 0.8566085
-##   [8] 0.8553616 0.8541147 0.8528678 0.8516209 0.8528678 0.8541147 0.8491272
-##  [15] 0.8478803 0.8416459 0.8441397 0.8441397 0.8553616 0.8553616 0.8553616
-##  [22] 0.8553616 0.8553616 0.8553616 0.8553616 0.8553616 0.8553616 0.8553616
-##  [29] 0.8553616 0.8553616 0.8553616 0.8516209 0.8528678 0.8503741 0.8503741
-##  [36] 0.8478803 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147
-##  [43] 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147
-##  [50] 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8528678 0.8528678
-##  [57] 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678
-##  [64] 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678
-##  [71] 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678
-##  [78] 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678
-##  [85] 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678
-##  [92] 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678
-##  [99] 0.8528678 0.8528678</code></pre>
+<pre><code>##   [1] 0.8004988 0.8054863 0.8204489 0.8329177 0.8428928 0.8503741 0.8591022 0.8591022 0.8528678 0.8503741 0.8541147 0.8516209
+##  [13] 0.8466334 0.8566085 0.8491272 0.8416459 0.8428928 0.8428928 0.8553616 0.8553616 0.8553616 0.8553616 0.8553616 0.8553616
+##  [25] 0.8553616 0.8553616 0.8553616 0.8553616 0.8553616 0.8553616 0.8553616 0.8516209 0.8528678 0.8503741 0.8503741 0.8478803
+##  [37] 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147
+##  [49] 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8541147 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678
+##  [61] 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678
+##  [73] 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678
+##  [85] 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678 0.8528678
+##  [97] 0.8528678 0.8528678 0.8528678 0.8528678</code></pre>
 <pre class="r"><code># Plot Knn Accuracy and IBU/ABV by Style for question #8
 plot(seq(1, maxKvalue, 1), accuracyVector, type = &quot;l&quot;, xlab = &quot;K value&quot;, ylab = &quot;accuracy&quot;, main = &quot;accuracy for k values&quot;)</code></pre>
 <p><img src="BeerAnalysis_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
@@ -692,12 +660,12 @@ IBUBeer = mergedBeerData %&gt;% filter(!is.na(IBU))
 
 avgBeer = mergedBeerData %&gt;% filter(IBU == 42 &amp; ABV == 0.059)
 avgBeer</code></pre>
-<pre><code>##   Brewery_id         Name.x Beer_ID   ABV IBU                        Style
-## 1        235    Harpoon IPA    1379 0.059  42                 American IPA
-## 2        269 Long Trail IPA    1926 0.059  42 English India Pale Ale (IPA)
-##   Ounces                     Name.y                City State
-## 1     12            Harpoon Brewery              Boston    MA
-## 2     12 Long Trail Brewing Company Bridgewater Corners    VT</code></pre>
+<pre><code>##   Brewery_id         Name.x Beer_ID   ABV IBU                        Style Ounces                     Name.y                City
+## 1        235    Harpoon IPA    1379 0.059  42                 American IPA     12            Harpoon Brewery              Boston
+## 2        269 Long Trail IPA    1926 0.059  42 English India Pale Ale (IPA)     12 Long Trail Brewing Company Bridgewater Corners
+##   State
+## 1    MA
+## 2    VT</code></pre>
 
 
 

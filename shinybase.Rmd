@@ -1,0 +1,21 @@
+---
+title: "ShinyBase"
+author: "Abhay Sharma"
+date: "2022-11-08"
+runtime: shiny
+---
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  
+
+  titlePanel("New Shiny App")
+  
+  sidebarLayout(
+    sidebarPanel()
+  )
+)
+```
+

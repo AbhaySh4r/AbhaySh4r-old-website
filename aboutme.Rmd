@@ -1,0 +1,16 @@
+---
+title: "aboutme"
+author: "Abhay Sharma"
+date: "2022-11-09"
+output: html_document
+---
+
+# About Me: 
+
+Name: Abhay Sharma
+
+Picture: [Redacted]
+
+Place of Origin: Somewhere in Southern California
+
+Interests: Space
